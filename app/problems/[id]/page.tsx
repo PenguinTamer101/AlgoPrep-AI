@@ -1,16 +1,21 @@
+// app/problems/[id]/page.tsx
 "use client"
 
 import { useState } from "react"
 import { Layout } from "@/components/layout"
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels"
+import { useParams } from "next/navigation"
 import CodeEditor from "@/components/code-editor"
 import AiChat from "@/components/ai-chat"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Button } from "@/components/ui/button"
-import { useParams } from "next/navigation"
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable"
+import { Badge } from "@/components/ui/badge"
 
 export default function ProblemPage() {
   const [language, setLanguage] = useState("python")
+  const [activeTab, setActiveTab] = useState("problem")
   const params = useParams()
   const id = params.id as string
   
@@ -27,6 +32,16 @@ export default function ProblemPage() {
         input: "nums = [2,7,11,15], target = 9",
         output: "[0,1]",
         explanation: "Because nums[0] + nums[1] == 9, we return [0, 1]."
+      },
+      {
+        input: "nums = [3,2,4], target = 6",
+        output: "[1,2]",
+        explanation: "Because nums[1] + nums[2] == 6, we return [1, 2]."
+      },
+      {
+        input: "nums = [3,3], target = 6",
+        output: "[0,1]",
+        explanation: "Because nums[0] + nums[1] == 6, we return [0, 1]."
       }
     ],
     constraints: [
@@ -34,6 +49,11 @@ export default function ProblemPage() {
       "-10^9 <= nums[i] <= 10^9",
       "-10^9 <= target <= 10^9",
       "Only one valid answer exists."
+    ],
+    hints: [
+      "Try using a HashMap to store values you've seen.",
+      "For each number, check if target - number exists in the HashMap.",
+      "Using a single pass approach, you can solve this in O(n) time complexity."
     ]
   }
 
@@ -66,78 +86,124 @@ function twoSum(nums, target) {
     }
   }
 
+  // Handle code changes
+  const handleCodeChange = (code: string) => {
+    console.log("Code updated:", code);
+    // Save code state or perform validation
+  }
+
+  // Function to determine badge variant based on difficulty
+  const getDifficultyVariant = (difficulty: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (difficulty.toLowerCase()) {
+      case "easy":
+        return "default"; // Using default (typically green/primary color)
+      case "medium":
+        return "secondary"; // Using secondary (typically yellow/amber)
+      case "hard":
+        return "destructive"; // Using destructive (typically red)
+      default:
+        return "outline";
+    }
+  }
+
   return (
     <Layout>
-      <div className="flex flex-col h-[calc(100vh-4rem)]">
-        {/* Problem Header */}
-        <div className="border-b px-6 py-3 flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-bold">{problem.title}</h1>
-            <p className="text-muted-foreground text-sm">
-              Problem #{id} • {problem.difficulty}
-            </p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Select 
-              value={language} 
-              onValueChange={setLanguage}
-            >
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Select Language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="python">Python</SelectItem>
-                <SelectItem value="javascript">JavaScript</SelectItem>
-                <SelectItem value="java">Java</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button>Run Code</Button>
-            <Button variant="outline">Submit</Button>
-          </div>
-        </div>
-
-        {/* Resizable Panels */}
-        <div className="flex-1 overflow-hidden">
-          <PanelGroup direction="horizontal">
-            {/* Problem Description & Code Editor Panel */}
-            <Panel defaultSize={60} minSize={30}>
-              <div className="h-full flex flex-col">
-                <div className="p-6 overflow-y-auto h-1/3 border-b">
-                  <div dangerouslySetInnerHTML={{ __html: problem.description }} className="prose max-w-none mb-6" />
-                  <h3 className="font-semibold mb-2">Examples:</h3>
-                  {problem.examples.map((example, index) => (
-                    <div key={index} className="mb-4 bg-muted p-3 rounded">
-                      <div className="mb-1"><span className="font-medium">Input:</span> {example.input}</div>
-                      <div className="mb-1"><span className="font-medium">Output:</span> {example.output}</div>
-                      {example.explanation && (
-                        <div><span className="font-medium">Explanation:</span> {example.explanation}</div>
-                      )}
-                    </div>
-                  ))}
-                  <h3 className="font-semibold mb-2">Constraints:</h3>
-                  <ul className="list-disc pl-5">
-                    {problem.constraints.map((constraint, index) => (
-                      <li key={index} className="mb-1">{constraint}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="flex-1">
-                  <CodeEditor 
-                    language={language}
-                    code={getStarterCode(language)}
-                  />
+      <div className="h-[calc(100vh-4rem)] bg-gray-100 dark:bg-zinc-900 p-4">
+        <ResizablePanelGroup direction="horizontal" className="h-full gap-4">
+          {/* Left Panel (Problem/Chat) */}
+          <ResizablePanel defaultSize={40} minSize={30}>
+            <div className="h-full flex flex-col border border-border rounded-md overflow-hidden bg-white dark:bg-zinc-800 shadow-md">
+              {/* Problem Title (only on left side) */}
+              <div className="border-b px-6 py-3">
+                <h1 className="text-xl font-bold">{problem.title}</h1>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge variant="outline">Problem #{id}</Badge>
+                  <Badge variant={getDifficultyVariant(problem.difficulty)}>{problem.difficulty}</Badge>
                 </div>
               </div>
-            </Panel>
-            
-            <PanelResizeHandle className="w-1.5 bg-muted hover:bg-primary transition-colors" />
-            
-            {/* AI Chat Panel */}
-            <Panel defaultSize={40} minSize={30}>
-              <AiChat />
-            </Panel>
-          </PanelGroup>
-        </div>
+
+              {/* Custom Tab Navigation */}
+              {/* Custom Tabs - Segmented Control Style */}
+              <div className="px-6 py-3 border-b border-border">
+                <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-50 dark:bg-zinc-700/50 p-1 text-muted-foreground">
+                  <button
+                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                      activeTab === "problem"
+                        ? "bg-white dark:bg-zinc-800 text-foreground shadow-sm"
+                        : "hover:text-foreground"
+                    }`}
+                    onClick={() => setActiveTab("problem")}
+                  >
+                    Problem
+                  </button>
+                  <button
+                    className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${
+                      activeTab === "chat"
+                        ? "bg-white dark:bg-zinc-800 text-foreground shadow-sm"
+                        : "hover:text-foreground"
+                    }`}
+                    onClick={() => setActiveTab("chat")}
+                  >
+                    AI Assistant
+                  </button>
+                </div>
+              </div>
+              
+              {/* Content Based on Active Tab */}
+              <div className="flex-1 overflow-hidden">
+                {activeTab === "problem" && (
+                  <div className="h-full overflow-y-auto p-6">
+                    <div dangerouslySetInnerHTML={{ __html: problem.description }} className="prose max-w-none mb-6" />
+                    
+                    <h3 className="font-semibold mb-2">Examples:</h3>
+                    {problem.examples.map((example, index) => (
+                      <div key={index} className="mb-4 bg-gray-50 dark:bg-zinc-700/50 p-3 rounded-md">
+                        <div className="mb-1"><span className="font-medium">Input:</span> {example.input}</div>
+                        <div className="mb-1"><span className="font-medium">Output:</span> {example.output}</div>
+                        {example.explanation && (
+                          <div><span className="font-medium">Explanation:</span> {example.explanation}</div>
+                        )}
+                      </div>
+                    ))}
+                    
+                    <h3 className="font-semibold mb-2">Constraints:</h3>
+                    <ul className="list-disc pl-5">
+                      {problem.constraints.map((constraint, index) => (
+                        <li key={index} className="mb-1">{constraint}</li>
+                      ))}
+                    </ul>
+                    
+                    <h3 className="font-semibold mb-2 mt-4">Hints:</h3>
+                    <ul className="list-disc pl-5">
+                      {problem.hints.map((hint, index) => (
+                        <li key={index} className="mb-1">{hint}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {activeTab === "chat" && (
+                  <div className="h-full">
+                    <AiChat />
+                  </div>
+                )}
+              </div>
+            </div>
+          </ResizablePanel>
+          
+          <ResizableHandle withHandle />
+          
+          {/* Right Panel (Code Editor) */}
+          <ResizablePanel defaultSize={60} minSize={40}>
+            <CodeEditor 
+              language={language}
+              code={getStarterCode(language)}
+              onChange={handleCodeChange}
+              onLanguageChange={setLanguage}
+              showLineNumbers={true}
+            />
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
     </Layout>
   )

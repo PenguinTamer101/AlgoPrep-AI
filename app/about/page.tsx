@@ -1,4 +1,4 @@
-// app/about/page.tsx - About page with modular navbar
+// app/about/page.tsx
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card } from "@/components/ui/card"
 import { Layout } from "@/components/layout"

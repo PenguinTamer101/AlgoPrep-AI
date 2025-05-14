@@ -1,4 +1,4 @@
-// components/code-display.tsx - Fixed version
+// components/code-display.tsx
 "use client"
 
 import React from "react"
@@ -6,28 +6,18 @@ import { Highlight, themes } from "prism-react-renderer"
 
 const pythonCode = `class Solution:
     def twoSum(self, nums: List[int], target: int) -> List[int]:
-        # Create a hash map to store values and their indices
         num_map = {}
         
-        # Iterate through the array
         for i, num in enumerate(nums):
-            # Calculate the complement needed to reach target
             complement = target - num
             
-            # Check if the complement exists in our map
             if complement in num_map:
-                # Return indices of the two numbers
                 return [num_map[complement], i]
             
-            # Add current number and index to the map
             num_map[num] = i
         
-        # No solution found
         return []
-
-# Example usage:
-# Input: nums = [2, 7, 11, 15], target = 9
-# Output: [0, 1]`
+        `
 
 interface CodeDisplayProps {
   className?: string

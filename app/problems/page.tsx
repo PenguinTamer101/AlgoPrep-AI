@@ -1,4 +1,4 @@
-// app/problems/page.tsx - Problems page with modular navbar
+// app/problems/page.tsx
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
