@@ -1,0 +1,19 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Firebase
+serviceAccount.json
+**/serviceAccount*.json
+
+# Build and dependencies
+node_modules/
+dist/
+build/
+
+# IDE and system files
+.DS_Store
+.idea/
+.vscode/
+*.log 
