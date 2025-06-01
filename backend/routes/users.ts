@@ -8,6 +8,7 @@ const router = Router();
 router.post('/profile', authMiddleware, async (req, res): Promise<void> => {
   try {
     if (!req.user) {
+      console.log('No user found in request');
       res.status(401).json({ error: 'User not authenticated' });
       return;
     }
@@ -16,6 +17,8 @@ router.post('/profile', authMiddleware, async (req, res): Promise<void> => {
       uid: req.user.uid,
       email: req.user.email
     });
+
+    console.log('User creation result:', { created, uid: req.user.uid });
 
     if (created) {
       res.status(201).json({ message: 'User profile created successfully' });

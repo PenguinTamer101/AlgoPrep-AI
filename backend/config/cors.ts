@@ -1,5 +1,9 @@
 import cors from 'cors';
+import dotenv from 'dotenv';
 
+dotenv.config();
+
+console.log(process.env.FRONTEND_URL);
 // Basic CORS configuration
 const corsOptions: cors.CorsOptions = {
   // Allow requests from your frontend domain

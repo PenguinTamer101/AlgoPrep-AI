@@ -25,8 +25,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const createUserProfile = async (user: User) => {
   try {
-    const idToken = await user.getIdToken();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/profile`, {
+    const idToken = await user.getIdToken();    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/profile`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${idToken}`,
