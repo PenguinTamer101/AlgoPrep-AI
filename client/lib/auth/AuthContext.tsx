@@ -35,9 +35,11 @@ const createUserProfile = async (user: User) => {
     });
     
     const data = await response.json();
+    console.log('Profile creation response:', data);
     
     // If user already exists (200) or was created (201), both are success cases
     if (response.status === 200 || response.status === 201) {
+      console.log('User profile data:', data.user);
       return; // Success - user exists or was created
     }
     
@@ -45,7 +47,7 @@ const createUserProfile = async (user: User) => {
     throw new Error(data.error || 'Failed to create user profile');
   } catch (error: any) {
     // Log the error but don't throw it - we don't want to break the auth flow
-    console.warn('Profile creation warning:', error.message);
+    console.error('Profile creation error:', error.message);
     // We can safely continue even if profile creation fails
     // because the user is still authenticated
   }

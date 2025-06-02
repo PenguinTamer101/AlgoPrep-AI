@@ -13,6 +13,11 @@ router.post('/profile', authMiddleware, async (req, res): Promise<void> => {
       return;
     }
 
+    console.log('Creating user with data:', {
+      uid: req.user.uid,
+      email: req.user.email
+    });
+
     const { created } = await createUser({
       uid: req.user.uid,
       email: req.user.email
@@ -21,9 +26,15 @@ router.post('/profile', authMiddleware, async (req, res): Promise<void> => {
     console.log('User creation result:', { created, uid: req.user.uid });
 
     if (created) {
-      res.status(201).json({ message: 'User profile created successfully' });
+      // Get the created user to verify the data
+      const user = await getUser(req.user.uid);
+      console.log('Created user data:', user);
+      res.status(201).json({ message: 'User profile created successfully', user });
     } else {
-      res.status(200).json({ message: 'User profile already exists' });
+      // Get existing user to verify the data
+      const user = await getUser(req.user.uid);
+      console.log('Existing user data:', user);
+      res.status(200).json({ message: 'User profile already exists', user });
     }
   } catch (error) {
     console.error('Error creating user profile:', error);
