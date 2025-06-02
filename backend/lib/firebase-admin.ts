@@ -1,9 +1,17 @@
 import * as admin from 'firebase-admin';
-import serviceAccount from '../serviceAccount.json';
 import { ServiceAccount } from 'firebase-admin';
 
+if (!process.env.FIREBASE_CREDENTIALS) {
+  throw new Error('FIREBASE_CREDENTIALS is not set');
+}
+
+// Decode the base64 credentials
+const serviceAccount: ServiceAccount = JSON.parse(
+  Buffer.from(process.env.FIREBASE_CREDENTIALS, 'base64').toString()
+);
+
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as ServiceAccount)
+  credential: admin.credential.cert(serviceAccount)
 });
 
 export const auth = admin.auth();

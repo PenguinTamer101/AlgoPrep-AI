@@ -40,6 +40,8 @@ yarn-error.log*
 .env*
 serviceAccount.json
 **/serviceAccount*.json
+hashed-credentials.json
+**/hashed-credentials*.json
 .env.local
 .env.*.local
 
