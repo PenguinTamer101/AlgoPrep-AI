@@ -1,10 +1,8 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import { authMiddleware } from './middleware/auth';
 import { corsMiddleware } from './config/cors';
 import usersRouter from './routes/users';
-
-dotenv.config();
+import { env } from './config/env';
 
 const app = express();
 
@@ -23,8 +21,6 @@ app.get('/', authMiddleware, (req, res) => {
   });
 });
 
-const PORT = process.env.PORT;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(env.port, () => {
+  console.log(`Server is running on port ${env.port}`);
 }); 
