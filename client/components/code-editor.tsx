@@ -12,6 +12,7 @@ interface CodeEditorProps {
   onChange?: (code: string) => void
   onLanguageChange?: (language: string) => void
   showLineNumbers?: boolean
+  onHintRequest?: () => void
 }
 
 export default function CodeEditor({ 
@@ -19,7 +20,8 @@ export default function CodeEditor({
   code: initialCode, 
   onChange,
   onLanguageChange,
-  showLineNumbers = false 
+  showLineNumbers = false,
+  onHintRequest
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode)
 
@@ -45,7 +47,7 @@ export default function CodeEditor({
   
   return (
     <div className="h-full flex flex-col border border-border rounded-md overflow-hidden bg-white dark:bg-zinc-800 shadow-md">
-      <div className="flex items-center justify-start bg-gray-50 dark:bg-zinc-700/50 border-b border-border p-2 px-4">
+      <div className="flex items-center justify-between bg-gray-50 dark:bg-zinc-700/50 border-b border-border p-2 px-4">
         <div className="flex items-center space-x-2">
           <Select 
             value={language} 
@@ -63,6 +65,13 @@ export default function CodeEditor({
           <Button size="sm" variant="outline">Run</Button>
           <Button size="sm">Submit</Button>
         </div>
+        <Button 
+          size="sm" 
+          variant="secondary"
+          onClick={onHintRequest}
+        >
+          Hint
+        </Button>
       </div>
       
       <div className="flex-1 flex overflow-hidden">

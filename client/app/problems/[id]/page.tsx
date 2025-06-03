@@ -1,26 +1,29 @@
 // app/problems/[id]/page.tsx
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Layout } from "@/components/layout"
 import { useParams } from "next/navigation"
 import CodeEditor from "@/components/code-editor"
-import AiChat from "@/components/ai-chat"
+import AiChat, { AiChatRef } from "@/components/ai-chat"
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import { Badge } from "@/components/ui/badge"
+import { getHint, ProblemContext } from "@/lib/gemini"
 
 export default function ProblemPage() {
   const [language, setLanguage] = useState("python")
   const [activeTab, setActiveTab] = useState("problem")
+  const [code, setCode] = useState("")
+  const chatRef = useRef<AiChatRef>(null)
   const params = useParams()
   const id = params.id as string
   
   // Sample problem data - would normally be fetched based on id
-  const problem = {
+  const problem: ProblemContext = {
     id: id,
     title: "Two Sum",
     difficulty: "Easy",
@@ -49,11 +52,6 @@ export default function ProblemPage() {
       "-10^9 <= nums[i] <= 10^9",
       "-10^9 <= target <= 10^9",
       "Only one valid answer exists."
-    ],
-    hints: [
-      "Try using a HashMap to store values you've seen.",
-      "For each number, check if target - number exists in the HashMap.",
-      "Using a single pass approach, you can solve this in O(n) time complexity."
     ]
   }
 
@@ -87,20 +85,41 @@ function twoSum(nums, target) {
   }
 
   // Handle code changes
-  const handleCodeChange = (code: string) => {
-    console.log("Code updated:", code);
-    // Save code state or perform validation
+  const handleCodeChange = (newCode: string) => {
+    setCode(newCode);
+  }
+
+  // Handle hint request
+  const handleHintRequest = async () => {
+    try {
+      // Switch to chat tab to show the hint
+      setActiveTab("chat");
+      
+      // Get hint from Gemini
+      const hint = await getHint(problem, code, language);
+      
+      // Add hint to chat using ref
+      if (chatRef.current) {
+        chatRef.current.addMessage({
+          role: "assistant",
+          content: hint,
+          id: `hint-${Date.now()}`
+        });
+      }
+    } catch (error) {
+      console.error("Error getting hint:", error);
+    }
   }
 
   // Function to determine badge variant based on difficulty
   const getDifficultyVariant = (difficulty: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (difficulty.toLowerCase()) {
       case "easy":
-        return "default"; // Using default (typically green/primary color)
+        return "default";
       case "medium":
-        return "secondary"; // Using secondary (typically yellow/amber)
+        return "secondary";
       case "hard":
-        return "destructive"; // Using destructive (typically red)
+        return "destructive";
       default:
         return "outline";
     }
@@ -123,7 +142,6 @@ function twoSum(nums, target) {
               </div>
 
               {/* Custom Tab Navigation */}
-              {/* Custom Tabs - Segmented Control Style */}
               <div className="px-6 py-3 border-b border-border">
                 <div className="inline-flex h-9 items-center justify-center rounded-lg bg-gray-50 dark:bg-zinc-700/50 p-1 text-muted-foreground">
                   <button
@@ -172,19 +190,12 @@ function twoSum(nums, target) {
                         <li key={index} className="mb-1">{constraint}</li>
                       ))}
                     </ul>
-                    
-                    <h3 className="font-semibold mb-2 mt-4">Hints:</h3>
-                    <ul className="list-disc pl-5">
-                      {problem.hints.map((hint, index) => (
-                        <li key={index} className="mb-1">{hint}</li>
-                      ))}
-                    </ul>
                   </div>
                 )}
                 
                 {activeTab === "chat" && (
                   <div className="h-full">
-                    <AiChat />
+                    <AiChat ref={chatRef} />
                   </div>
                 )}
               </div>
@@ -197,10 +208,11 @@ function twoSum(nums, target) {
           <ResizablePanel defaultSize={60} minSize={40}>
             <CodeEditor 
               language={language}
-              code={getStarterCode(language)}
+              code={code || getStarterCode(language)}
               onChange={handleCodeChange}
               onLanguageChange={setLanguage}
               showLineNumbers={true}
+              onHintRequest={handleHintRequest}
             />
           </ResizablePanel>
         </ResizablePanelGroup>
