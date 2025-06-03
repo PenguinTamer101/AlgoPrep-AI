@@ -24,6 +24,7 @@ export default function CodeEditor({
   onHintRequest
 }: CodeEditorProps) {
   const [code, setCode] = useState(initialCode)
+  const [isLoadingHint, setIsLoadingHint] = useState(false)
 
   useEffect(() => {
     setCode(initialCode)
@@ -42,18 +43,28 @@ export default function CodeEditor({
     }
   }
 
+  const handleHintRequest = async () => {
+    if (isLoadingHint) return
+    setIsLoadingHint(true)
+    try {
+      await onHintRequest?.()
+    } finally {
+      setIsLoadingHint(false)
+    }
+  }
+
   // Count the number of lines in the code
   const lineCount = code.split("\n").length
   
   return (
-    <div className="h-full flex flex-col border border-border rounded-md overflow-hidden bg-white dark:bg-zinc-800 shadow-md">
-      <div className="flex items-center justify-between bg-gray-50 dark:bg-zinc-700/50 border-b border-border p-2 px-4">
+    <div className="h-full flex flex-col border border-border rounded-md overflow-hidden bg-zinc-50 dark:bg-zinc-800 shadow-md">
+      <div className="flex items-center justify-between bg-white dark:bg-zinc-800 border-b border-border p-2 px-4">
         <div className="flex items-center space-x-2">
           <Select 
             value={language} 
             onValueChange={handleLanguageChange}
           >
-            <SelectTrigger className="w-32 h-8">
+            <SelectTrigger className="w-32 h-8 bg-white dark:bg-zinc-700">
               <SelectValue placeholder="Language" />
             </SelectTrigger>
             <SelectContent>
@@ -62,15 +73,17 @@ export default function CodeEditor({
               <SelectItem value="java">Java</SelectItem>
             </SelectContent>
           </Select>
-          <Button size="sm" variant="outline">Run</Button>
-          <Button size="sm">Submit</Button>
+          <Button size="sm" variant="outline" className="bg-white dark:bg-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-600">Run</Button>
+          <Button size="sm" className="bg-primary hover:bg-primary/90">Submit</Button>
         </div>
         <Button 
           size="sm" 
-          variant="secondary"
-          onClick={onHintRequest}
+          variant="outline"
+          onClick={handleHintRequest}
+          disabled={isLoadingHint}
+          className="bg-white dark:bg-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-600"
         >
-          Hint
+          {isLoadingHint ? "Loading..." : "Hint"}
         </Button>
       </div>
       
@@ -100,7 +113,7 @@ export default function CodeEditor({
             style={{
               fontSize: 14,
               fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-              backgroundColor: "#1e1e1e",
+              backgroundColor: "#18181b",
               minHeight: "100%",
               width: "100%",
               borderRadius: 0,

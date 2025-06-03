@@ -33,7 +33,7 @@ export default function ProblemsPage() {
   return (
     <Layout>
       {/* Problems List */}
-      <section className="w-full py-12">
+      <section className="min-h-[calc(100vh-4rem)] w-full py-12 bg-gray-100 dark:bg-zinc-900">
         <div className="w-full max-w-[1600px] mx-auto px-6 md:px-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold">Practice Problems</h1>
@@ -43,7 +43,7 @@ export default function ProblemsPage() {
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {problems.map((problem) => (
               <Link key={problem.id} href={`/problems/${problem.id}`} className="group">
-                <Card className="h-full transition-all hover:shadow-md">
+                <Card className="h-full transition-all hover:shadow-md bg-white dark:bg-zinc-800">
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start">
                       <CardTitle className="group-hover:text-primary transition-colors">
