@@ -14,13 +14,16 @@ export default function AboutPage() {
             {/* Team Member 1 */}
             <Card className="flex flex-col items-center text-center p-6 bg-white dark:bg-zinc-800">
               <Avatar className="h-32 w-32 mb-4">
-                <AvatarImage src="/api/placeholder/150/150" alt="Alex Johnson" />
+                <AvatarImage 
+                  src="https://media.licdn.com/dms/image/v2/D5603AQH-elgt6OQ2lw/profile-displayphoto-shrink_400_400/B56ZbpyoGhG4Ag-/0/1747679085467?e=1754524800&v=beta&t=qxvpFq4I9WhQgRd0n5v-VnqREKA_OaYF91OTunI51pY" 
+                  alt="Salma Hajian" 
+                />
                 <AvatarFallback>SH</AvatarFallback>
               </Avatar>
               <h3 className="text-xl font-bold">Salma Hajian</h3>
               <p className="text-sm text-muted-foreground mb-2">Co-Founder & Developer</p>
               <p className="text-sm mb-4">
-                Former Software Engineer at Google with a passion for algorithms and teaching. Alex has conducted over 200 technical interviews and knows what it takes to succeed.
+                Current master's student at the University of Washington, Seattle, studying Computer Science. Salma is interested in AI and machine learning, and is excited to share AlgoPrep with the world!
               </p>
               <div className="flex space-x-3 mt-auto">
                 <a href="https://github.com/PenguinTamer101" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
@@ -49,13 +52,16 @@ export default function AboutPage() {
             {/* Team Member 2 */}
             <Card className="flex flex-col items-center text-center p-6 bg-white dark:bg-zinc-800">
               <Avatar className="h-32 w-32 mb-4">
-                <AvatarImage src="/api/placeholder/150/150" alt="Sam Taylor" />
+                <AvatarImage 
+                  src="https://media.licdn.com/dms/image/v2/D5635AQHrM67ADXOFAg/profile-framedphoto-shrink_400_400/profile-framedphoto-shrink_400_400/0/1729104531496?e=1749621600&v=beta&t=SSlQq5aAVzLCh3ZfAak7pdcsBxwazhMVJLFRtBVcr7c" 
+                  alt="Javid Ibrahimov" 
+                />
                 <AvatarFallback>JI</AvatarFallback>
               </Avatar>
               <h3 className="text-xl font-bold">Javid Ibrahimov</h3>
               <p className="text-sm text-muted-foreground mb-2">Co-Founder & Developer</p>
               <p className="text-sm mb-4">
-                ML Engineer with experience at top tech firms. Sam specializes in AI-powered education and is dedicated to creating a personalized learning experience for every user.
+                Recent computer science graduate, Javid is interested in building products that help people learn and grow. AlgoPrep was an idea he came up with while grinding LeetCode for job interviews. He hopes it helps you too!
               </p>
               <div className="flex space-x-3 mt-auto">
                 <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground">
