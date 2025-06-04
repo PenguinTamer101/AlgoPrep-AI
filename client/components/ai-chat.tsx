@@ -1,7 +1,7 @@
 // components/ai-chat.tsx
 "use client"
 
-import { useState, useEffect, useImperativeHandle, forwardRef } from "react"
+import { useState, useEffect, useImperativeHandle, forwardRef, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
@@ -19,6 +19,7 @@ const AiChat = forwardRef<AiChatRef>((_, ref) => {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isClient, setIsClient] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Expose methods to parent components
   useImperativeHandle(ref, () => ({
@@ -26,6 +27,15 @@ const AiChat = forwardRef<AiChatRef>((_, ref) => {
       setMessages(prev => [...prev, message])
     }
   }))
+
+  // Scroll to bottom when messages change
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
 
   // Initialize component after mounting
   useEffect(() => {
@@ -120,6 +130,7 @@ const AiChat = forwardRef<AiChatRef>((_, ref) => {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
       
       <div className="p-3 border-t bg-white dark:bg-zinc-800">
